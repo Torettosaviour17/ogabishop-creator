@@ -9,32 +9,39 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section with Background Image */}
-      <div
-        className="relative h-[85vh] bg-cover bg-center flex items-center justify-center"
-        style={{
-          backgroundImage:
-            "url('https://placehold.co/1920x1080/1a1a2e/red?text=OGABISHOP+BANNER')",
-        }}
-      >
+      {/* Hero Section with fixed background image */}
+      <div className="relative w-full min-h-[85vh] flex items-center justify-center overflow-hidden">
+        {/* Background Image - fixed to cover the entire hero area without distortion */}
+        <div
+          className="absolute inset-0 w-full h-full"
+          style={{
+            backgroundImage: "url('/public/oga5.jpeg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center 30%",
+            backgroundRepeat: "no-repeat",
+          }}
+        />
+        {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-black/50" />
-        <div className="relative text-center px-4">
-          <h1 className="text-6xl md:text-8xl font-extrabold bg-gradient-to-r from-red-500 to-orange-400 bg-clip-text text-transparent animate-pulse">
+
+        {/* Content */}
+        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold bg-gradient-to-r from-red-500 to-orange-400 bg-clip-text text-transparent animate-pulse">
             OGABISHOP
           </h1>
           <p className="text-xl md:text-2xl mt-4 text-gray-200">
             Joshua Christian Friday · Comedy Creator
           </p>
-          <div className="mt-8 flex justify-center gap-4">
+          <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
             <button
               onClick={handleCelebrate}
-              className="bg-red-600 hover:bg-red-700 px-8 py-3 rounded-full font-bold text-lg transition transform hover:scale-105"
+              className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-full font-bold text-lg transition transform hover:scale-105"
             >
               🎂 Celebrate Birthday
             </button>
             <Link
               to="/events"
-              className="bg-white/10 backdrop-blur-sm border border-red-500 hover:bg-red-600 px-8 py-3 rounded-full font-bold transition"
+              className="bg-white/10 backdrop-blur-sm border border-red-500 hover:bg-red-600 px-6 py-3 rounded-full font-bold text-lg transition"
             >
               📅 View Events
             </Link>
@@ -42,22 +49,22 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Countdown Timer Section */}
-      <div className="max-w-4xl mx-auto -mt-16 relative z-10">
-        <div className="bg-black/70 backdrop-blur-lg rounded-2xl p-6 text-center border border-red-500 shadow-2xl">
-          <h2 className="text-2xl font-bold mb-4">
+      {/* Countdown Timer Section - responsive width */}
+      <div className="max-w-4xl mx-auto px-4 -mt-16 relative z-20">
+        <div className="bg-black/70 backdrop-blur-lg rounded-2xl p-4 md:p-6 text-center border border-red-500 shadow-2xl">
+          <h2 className="text-xl md:text-2xl font-bold mb-4">
             🎈 Next Birthday Countdown
           </h2>
           <CountdownTimer />
         </div>
       </div>
 
-      {/* Latest Works Grid */}
-      <div className="max-w-6xl mx-auto px-6 py-16">
-        <h2 className="text-4xl font-bold text-center mb-12">
+      {/* Latest Works Grid - fully responsive */}
+      <div className="max-w-7xl mx-auto px-4 py-16">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 md:mb-12">
           🔥 Latest Comedy Drops
         </h2>
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           <div className="bg-gradient-to-br from-red-950/40 to-black rounded-2xl overflow-hidden border border-red-800 hover:scale-105 transition">
             <img
               src="https://placehold.co/600x400/2a1a2e/red?text=Skit+Thumbnail"

@@ -84,12 +84,11 @@ export default function Events() {
 
   // Check if event is today (May 28)
   const isBirthdayEvent = (eventDate: Date) => {
-    const today = new Date();
     return eventDate.getMonth() === 4 && eventDate.getDate() === 28;
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="max-w-7xl mx-auto p-4 md:p-6">
       <h1 className="text-5xl font-bold mb-2 text-center">
         📅 Events Timeline
       </h1>
@@ -172,7 +171,7 @@ export default function Events() {
 
                 {/* Image Gallery */}
                 {event.imageUrls.length > 0 && (
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 mt-5">
                     {event.imageUrls.map((url, idx) => (
                       <img
                         key={idx}
@@ -184,22 +183,24 @@ export default function Events() {
                 )}
 
                 {/* Add Images Button */}
-                <button
-                  onClick={() =>
-                    setSelectedEventId(
-                      event.id === selectedEventId ? null : event.id,
-                    )
-                  }
-                  className="mt-4 text-sm bg-red-900/60 hover:bg-red-800 px-4 py-2 rounded-full flex items-center gap-1"
-                >
-                  📸 {selectedEventId === event.id ? "Cancel" : "Add Images"}
-                </button>
-                <button
-                  onClick={() => handleDeleteEvent(event.id)}
-                  className="ml-3 text-sm bg-red-900/60 hover:bg-red-800 px-4 py-2 rounded-full"
-                >
-                  🗑️ Delete Event
-                </button>
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <button
+                    onClick={() =>
+                      setSelectedEventId(
+                        event.id === selectedEventId ? null : event.id,
+                      )
+                    }
+                    className="text-sm bg-red-900/60 hover:bg-red-800 px-4 py-2 rounded-full flex items-center gap-1 w-full sm:w-auto"
+                  >
+                    📸 {selectedEventId === event.id ? "Cancel" : "Add Images"}
+                  </button>
+                  <button
+                    onClick={() => handleDeleteEvent(event.id)}
+                    className="text-sm bg-red-900/60 hover:bg-red-800 px-4 py-2 rounded-full w-full sm:w-auto"
+                  >
+                    🗑️ Delete Event
+                  </button>
+                </div>
 
                 {/* Upload Form (shown only for this event) */}
                 {selectedEventId === event.id && (
@@ -211,12 +212,12 @@ export default function Events() {
                       onChange={(e) =>
                         setTempImageFiles(Array.from(e.target.files || []))
                       }
-                      className="mb-2"
+                      className="mb-2 w-full"
                     />
                     <button
                       onClick={() => handleUploadImagesToEvent(event.id)}
                       disabled={uploadingImg}
-                      className="bg-red-700 px-4 py-1 rounded-full text-sm"
+                      className="bg-red-700 px-4 py-1 rounded-full text-sm w-full sm:w-auto"
                     >
                       {uploadingImg ? "Uploading..." : "Upload Images"}
                     </button>
