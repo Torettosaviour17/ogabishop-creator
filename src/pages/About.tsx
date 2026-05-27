@@ -53,12 +53,12 @@ export default function About() {
       iconClass: "fab fa-youtube",
       handle: "OGABISHOP",
     },
-    {
-      name: "Twitter",
-      url: "#",
-      iconClass: "fab fa-twitter",
-      handle: "@ogabishop",
-    },
+    // {
+    //   name: "Twitter",
+    //   url: "#",
+    //   iconClass: "fab fa-twitter",
+    //   handle: "@ogabishop",
+    // },
     {
       name: "Facebook",
       url: "https://www.facebook.com/share/1DBBMCSFSK/?mibextid=wwXIfr",

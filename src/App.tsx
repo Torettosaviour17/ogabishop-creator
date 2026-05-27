@@ -3,13 +3,14 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import About from "./pages/About";
-import Portfolio from "./pages/Portfolio";
+import Portfolio from "./pages/Gallery";
 import Contact from "./pages/Contact";
 import Events from "./pages/Events";
 import Wishes from "./pages/Wishes";
 import Friendship from "./pages/Friendship";
 import ProtectedRoute from "./components/ProtectedRoute";
 import BirthdayPopup from "./components/BirthdayPopup";
+import Gallery from "./pages/Gallery";
 
 function App() {
   return (
@@ -20,7 +21,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
-            <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/gallery" element={<Gallery />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/events" element={<Events />} />
             <Route path="/wishes" element={<Wishes />} />

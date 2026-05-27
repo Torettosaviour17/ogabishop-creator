@@ -20,7 +20,7 @@ export default function Home() {
       stats: "789K Views",
     },
     {
-      url: "https://vm.tiktok.com/ZNRWyh1c5/",
+      url: "https://vm.tiktok.com/ZNRWybfHX/",
       title: "Exclusive Comedy Short",
       stats: "Trending Now",
     },
