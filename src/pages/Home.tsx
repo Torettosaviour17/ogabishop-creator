@@ -64,15 +64,43 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Countdown Timer Section - responsive width */}
-      {/* <div className="max-w-4xl mx-auto px-4 -mt-16 relative z-20">
-        <div className="bg-black/70 backdrop-blur-lg rounded-2xl p-4 md:p-6 text-center border border-red-500 shadow-2xl">
-          <h2 className="text-xl md:text-2xl font-bold mb-4">
-            🎈 Next Birthday Countdown
-          </h2>
-          <CountdownTimer />
+      {/* Location Card - Sunday Celebration */}
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="bg-gradient-to-r from-red-950/80 to-black rounded-2xl border border-red-700 p-6 shadow-xl">
+          <div className="flex flex-col md:flex-row items-center gap-6">
+            <div className="flex-shrink-0">
+              <div className="w-20 h-20 rounded-full bg-red-600 flex items-center justify-center">
+                <i className="fas fa-map-marker-alt text-3xl text-white"></i>
+              </div>
+            </div>
+            <div className="flex-1 text-center md:text-left">
+              <h3 className="text-2xl font-bold text-white mb-2">
+                🎉 Sunday Celebration 🎉
+              </h3>
+              <p className="text-gray-300 mb-1">
+                Join us this Sunday to celebrate with OGABISHOP!
+              </p>
+              <p className="text-red-400 font-medium mb-3">
+                📍 Click the button below for the exact location
+              </p>
+            </div>
+            <div>
+              <a
+                href="https://maps.app.goo.gl/GqUfURmuj3NRDtBc9?g_st=iwb"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-full transition duration-300 transform hover:scale-105"
+              >
+                <i className="fas fa-directions"></i>
+                Get Directions
+              </a>
+            </div>
+          </div>
+          <p className="text-xs text-gray-500 text-center mt-4">
+            *This event is only on Sunday. Don't miss out!
+          </p>
         </div>
-      </div> */}
+      </div>
 
       {/* Latest Comedy Drops with TikTok Embeds */}
       <div className="max-w-7xl mx-auto px-4 py-16">
