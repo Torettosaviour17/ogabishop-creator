@@ -11,10 +11,12 @@ import Friendship from "./pages/Friendship";
 import ProtectedRoute from "./components/ProtectedRoute";
 import BirthdayPopup from "./components/BirthdayPopup";
 import Gallery from "./pages/Gallery";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <div className="min-h-screen flex flex-col bg-dark text-white">
         <Navbar />
         <main className="grow">
