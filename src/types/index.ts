@@ -17,6 +17,7 @@ export interface Wish {
 export interface GalleryImage {
   id: string;
   imageUrl: string;
+  storagePath: string;
   caption: string;
   uploadedAt: Date;
 }

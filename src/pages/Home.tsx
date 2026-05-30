@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-// import CountdownTimer from "../components/CountdownTimer";
 import confetti from "canvas-confetti";
 import { TikTokEmbed } from "react-social-media-embed";
 
@@ -64,27 +63,44 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Location Card - Sunday Celebration */}
+      {/* Location Card - Sunday Celebration at Vicpillia Hotel */}
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="bg-gradient-to-r from-red-950/80 to-black rounded-2xl border border-red-700 p-6 shadow-xl">
-          <div className="flex flex-col md:flex-row items-center gap-6">
-            <div className="flex-shrink-0">
-              <div className="w-20 h-20 rounded-full bg-red-600 flex items-center justify-center">
-                <i className="fas fa-map-marker-alt text-3xl text-white"></i>
+        <div className="bg-gradient-to-r from-red-950/80 to-black rounded-2xl border border-red-700 overflow-hidden shadow-xl">
+          <div className="flex flex-col md:flex-row">
+            {/* Image Section - REPLACE URL WITH YOUR HOTEL IMAGE */}
+            <div className="md:w-1/3">
+              <img
+                src="/hotel-placeholder.jpg"
+                alt="Vicpillia Hotel"
+                className="w-full h-full object-cover min-h-[200px] md:min-h-full"
+              />
+            </div>
+
+            {/* Content Section */}
+            <div className="md:w-2/3 p-6">
+              <div className="flex items-center gap-2 mb-2">
+                <i className="fas fa-map-marker-alt text-red-500 text-xl"></i>
+                <h3 className="text-2xl font-bold text-white">
+                  Vicpillia Hotel
+                </h3>
               </div>
-            </div>
-            <div className="flex-1 text-center md:text-left">
-              <h3 className="text-2xl font-bold text-white mb-2">
-                🎉 Sunday Celebration 🎉
-              </h3>
-              <p className="text-gray-300 mb-1">
-                Join us this Sunday to celebrate with OGABISHOP!
+
+              <div className="flex items-center gap-4 flex-wrap mb-3">
+                <span className="flex items-center gap-1 text-gray-300">
+                  <i className="fas fa-calendar-alt text-red-400"></i>
+                  Sunday, May 31st
+                </span>
+                <span className="flex items-center gap-1 text-gray-300">
+                  <i className="fas fa-clock text-red-400"></i>
+                  By 8:00 PM
+                </span>
+              </div>
+
+              <p className="text-gray-300 mb-4">
+                Join us to celebrate OGABISHOP's birthday! Come through, have
+                fun, and make memories. Everyone is welcome! 🎂🎉
               </p>
-              <p className="text-red-400 font-medium mb-3">
-                📍 Click the button below for the exact location
-              </p>
-            </div>
-            <div>
+
               <a
                 href="https://maps.app.goo.gl/GqUfURmuj3NRDtBc9?g_st=iwb"
                 target="_blank"
@@ -96,9 +112,6 @@ export default function Home() {
               </a>
             </div>
           </div>
-          <p className="text-xs text-gray-500 text-center mt-4">
-            *This event is only on Sunday. Don't miss out!
-          </p>
         </div>
       </div>
 

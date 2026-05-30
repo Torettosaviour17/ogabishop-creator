@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ChangeEvent } from "react";
 import { db, storage } from "../firebase/config";
 import {
   collection,
@@ -38,7 +38,7 @@ export default function Gallery() {
     setImages(items);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0] || null;
     setFile(selectedFile);
     if (selectedFile) {
@@ -58,6 +58,7 @@ export default function Gallery() {
       const imageUrl = await getDownloadURL(storageRef);
       await addDoc(collection(db, "gallery"), {
         imageUrl,
+        storagePath: storageRef.fullPath,
         caption,
         uploadedAt: new Date(),
       });
@@ -74,16 +75,19 @@ export default function Gallery() {
     setUploading(false);
   };
 
-  const handleDelete = async (id: string, imageUrl: string) => {
+  const handleDelete = async (
+    id: string,
+    storagePath: string,
+  ) => {
     if (!confirm("Delete this image?")) return;
     try {
-      const imageRef = ref(storage, imageUrl);
+      const imageRef = ref(storage, storagePath);
       await deleteObject(imageRef);
       await deleteDoc(doc(db, "gallery", id));
       await fetchImages();
     } catch (error) {
       console.error(error);
-      alert("Delete failed");
+      alert("Delete failed. Make sure the image path is valid and storage permissions allow deletion.");
     }
   };
 
@@ -229,7 +233,7 @@ export default function Gallery() {
                     className="w-full h-56 object-cover"
                   />
                   <button
-                    onClick={() => handleDelete(img.id, img.imageUrl)}
+                    onClick={() => handleDelete(img.id, img.storagePath)}
                     className="absolute top-2 right-2 bg-black/70 hover:bg-red-700 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition"
                   >
                     <i className="fas fa-trash-alt text-sm"></i>

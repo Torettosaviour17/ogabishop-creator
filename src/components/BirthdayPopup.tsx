@@ -5,40 +5,55 @@ export default function BirthdayPopup() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    // Allow forcing the popup during development using:
-    // - URL query: ?showBirthday=1
-    // - Local storage: localStorage.setItem('forceBirthdayPopup','true')
-    const params = new URLSearchParams(window.location.search);
-    const force =
-      params.get("showBirthday") === "1" ||
-      localStorage.getItem("forceBirthdayPopup") === "true";
     const today = new Date();
-    const isBirthday = today.getMonth() === 4 && today.getDate() === 28; // May 28
-    if (isBirthday || force) {
+    const currentMonth = today.getMonth(); // 0 = Jan, 4 = May
+    const currentDay = today.getDate();
+
+    // Get stored dismissal date from localStorage
+    const dismissedUntil = localStorage.getItem("birthdayPopupDismissed");
+
+    // Check if popup was already dismissed for these dates
+    const todayStr = `${currentMonth}-${currentDay}`;
+    const shouldBeDismissed = dismissedUntil === todayStr;
+
+    // Active on May 30 AND May 31 (today and tomorrow)
+    const isActive =
+      (currentMonth === 4 && currentDay === 30) ||
+      (currentMonth === 4 && currentDay === 31);
+
+    if (isActive && !shouldBeDismissed) {
       setShow(true);
-      // Fire confetti when popup appears
       confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
     }
   }, []);
 
+  const handleClose = () => {
+    const today = new Date();
+    const todayStr = `${today.getMonth()}-${today.getDate()}`;
+    localStorage.setItem("birthdayPopupDismissed", todayStr);
+    setShow(false);
+  };
+
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-9999">
-      <div className="bg-linear-to-br from-red-900 to-black rounded-2xl p-6 md:p-8 max-w-md mx-4 text-center border-2 border-red-500 shadow-2xl animate-bounce">
-        <i className="fas fa-birthday-cake text-6xl text-yellow-400 mb-3"></i>
-        <h2 className="text-3xl md:text-4xl font-bold mb-3">
-          🎂 HAPPY BIRTHDAY OGABISHOP! 🎂
-        </h2>
-        <p className="text-base md:text-lg mb-4">
-          Joshua Christian Friday, you make the world laugh. Keep shining, king!
-          👑
-        </p>
+    <div
+      className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-[9999] cursor-pointer"
+      onClick={handleClose}
+    >
+      <div className="relative max-w-2xl w-full mx-4">
+        <img
+          src="/birthday-popup.jpg"
+          alt="Happy Birthday OGABISHOP"
+          className="w-full h-auto rounded-2xl shadow-2xl border-2 border-red-600"
+          onClick={handleClose}
+        />
+        {/* Optional close button (X) in top-right corner */}
         <button
-          onClick={() => setShow(false)}
-          className="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-full font-bold transition"
+          onClick={handleClose}
+          className="absolute top-2 right-2 bg-black/60 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-xl transition"
         >
-          Let's Party 🎉
+          ✕
         </button>
       </div>
     </div>
