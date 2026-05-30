@@ -3,7 +3,6 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import About from "./pages/About";
-// import gallery from "./pages/Gallery";
 import Contact from "./pages/Contact";
 import Events from "./pages/Events";
 import Wishes from "./pages/Wishes";
@@ -21,16 +20,40 @@ function App() {
         <Navbar />
         <main className="grow">
           <Routes>
+            {/* Home is public */}
             <Route path="/" element={<Home />} />
+
+            {/* All other routes require password "jesus" */}
             <Route path="/about" element={<About />} />
-            <Route path="/gallery" element={<Gallery />} />
+            <Route
+              path="/gallery"
+              element={
+                <ProtectedRoute password="jesus">
+                  <Gallery />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/events" element={<Events />} />
-            <Route path="/wishes" element={<Wishes />} />
+            <Route
+              path="/events"
+              element={
+                <ProtectedRoute password="jesus">
+                  <Events />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/wishes"
+              element={
+                <ProtectedRoute password="jesus">
+                  <Wishes />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/friendship"
               element={
-                <ProtectedRoute password="toretto">
+                <ProtectedRoute password="jesus">
                   <Friendship />
                 </ProtectedRoute>
               }

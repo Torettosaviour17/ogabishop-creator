@@ -13,10 +13,18 @@ export default function ProtectedRoute({
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Check if already authenticated in this session
+    const isAuth = sessionStorage.getItem("auth_builder");
+    if (isAuth === "true") {
+      setAuthorized(true);
+      return;
+    }
+
     const userPass = prompt(
       "🔒 This page is locked. Enter the secret password:",
     );
     if (userPass === password) {
+      sessionStorage.setItem("auth_builder", "true");
       setAuthorized(true);
     } else {
       alert("Wrong password. Redirecting to home.");
