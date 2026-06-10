@@ -1,4 +1,10 @@
-import { useState, useEffect, type ChangeEvent, type DragEvent } from "react";
+import {
+  useState,
+  useEffect,
+  type ChangeEvent,
+  type DragEvent,
+  useRef,
+} from "react";
 import { supabase } from "../supabase/client";
 
 interface GalleryImage {
@@ -18,7 +24,7 @@ export default function Gallery() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
-  const [openMenuId, setOpenMenuId] = useState<number | null>(null); // track which three-dot menu is open
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
 
   useEffect(() => {
     fetchImages();
@@ -106,7 +112,25 @@ export default function Gallery() {
     }
   };
 
-  // Close the three-dot menu if clicking outside
+  const handleDownload = async (imageUrl: string, caption: string) => {
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = caption ? `${caption}.jpg` : "ogabishop-image.jpg";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      console.error(err);
+      alert("Download failed");
+    }
+  };
+
+  // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = () => setOpenMenuId(null);
     document.addEventListener("click", handleClickOutside);
@@ -216,7 +240,7 @@ export default function Gallery() {
         </div>
       )}
 
-      {/* Gallery Grid – updated with three‑dot menu and modal trigger */}
+      {/* Gallery Grid – card now uses overflow-visible to show dropdown */}
       {images.length === 0 ? (
         <div className="text-center text-gray-400 py-20 bg-black/30 rounded-2xl border border-dashed border-red-800">
           <i className="fas fa-camera text-6xl mb-4 opacity-50"></i>
@@ -230,11 +254,11 @@ export default function Gallery() {
           {images.map((img) => (
             <div
               key={img.id}
-              className="bg-black/50 rounded-xl overflow-hidden border border-red-800 hover:scale-[1.02] transition group shadow-lg relative"
+              className="bg-black/50 rounded-xl border border-red-800 hover:scale-[1.02] transition group shadow-lg relative overflow-visible"
             >
               {/* Image – click to open modal */}
               <div
-                className="relative cursor-pointer"
+                className="relative cursor-pointer rounded-t-xl overflow-hidden"
                 onClick={() => setSelectedImage(img)}
               >
                 <img
@@ -267,14 +291,24 @@ export default function Gallery() {
                     <i className="fas fa-ellipsis-v"></i>
                   </button>
                   {openMenuId === img.id && (
-                    <div className="absolute right-0 mt-2 w-32 bg-black/90 backdrop-blur-sm rounded-lg shadow-lg border border-red-800 z-10">
+                    <div className="absolute right-0 mt-2 w-36 bg-black/95 backdrop-blur-sm rounded-lg shadow-lg border border-red-800 z-50">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDownload(img.image_url, img.caption || "image");
+                          setOpenMenuId(null);
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm text-blue-400 hover:bg-red-950 rounded-t-lg"
+                      >
+                        <i className="fas fa-download mr-2"></i> Download
+                      </button>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           handleDelete(img.id, img.storage_path);
                           setOpenMenuId(null);
                         }}
-                        className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-950 rounded-lg"
+                        className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-950 rounded-b-lg"
                       >
                         <i className="fas fa-trash-alt mr-2"></i> Delete
                       </button>
@@ -287,7 +321,7 @@ export default function Gallery() {
         </div>
       )}
 
-      {/* Full-screen Image Modal */}
+      {/* Full-screen Image Modal (unchanged) */}
       {selectedImage && (
         <div
           className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 transition-all"
