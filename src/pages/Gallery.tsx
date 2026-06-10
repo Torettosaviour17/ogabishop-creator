@@ -1,10 +1,4 @@
-import {
-  useState,
-  useEffect,
-  type ChangeEvent,
-  type DragEvent,
-  useRef,
-} from "react";
+import { useState, useEffect, type ChangeEvent, type DragEvent } from "react";
 import { supabase } from "../supabase/client";
 
 interface GalleryImage {
