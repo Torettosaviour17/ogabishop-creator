@@ -1,11 +1,24 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import confetti from "canvas-confetti";
 import { TikTokEmbed } from "react-social-media-embed";
 
 export default function Home() {
-  const handleCelebrate = () => {
-    confetti({ particleCount: 300, spread: 120, origin: { y: 0.6 } });
-  };
+  // Hero background carousel images (replace with your own)
+  const heroImages = [
+    "/oga5.jpeg", // your first image
+    "/oga1.jpeg", // second image
+    "/oga2.jpeg", // third image
+  ];
+
+  const [currentBg, setCurrentBg] = useState(0);
+
+  // Auto-rotate background every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentBg((prev) => (prev + 1) % heroImages.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const tiktokVideos = [
     {
@@ -27,16 +40,23 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section with Background Image */}
-      <div
-        className="relative w-full min-h-[85vh] flex items-center justify-center overflow-hidden"
-        style={{
-          backgroundImage: "url('/oga5.jpeg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center 30%",
-          backgroundRepeat: "no-repeat",
-        }}
-      >
+      {/* Hero Section with Carousel Background */}
+      <div className="relative w-full min-h-[85vh] flex items-center justify-center overflow-hidden">
+        {/* Background image with fade transition */}
+        {heroImages.map((img, idx) => (
+          <div
+            key={idx}
+            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+              idx === currentBg ? "opacity-100" : "opacity-0"
+            }`}
+            style={{
+              backgroundImage: `url(${img})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center 30%",
+              backgroundRepeat: "no-repeat",
+            }}
+          />
+        ))}
         <div className="absolute inset-0 bg-black/50" />
 
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
@@ -47,72 +67,53 @@ export default function Home() {
             Joshua Christian Friday · Comedy Creator
           </p>
           <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
-            <button
-              onClick={handleCelebrate}
-              className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-full font-bold text-lg transition transform hover:scale-105"
-            >
-              🎂 Celebrate Birthday
-            </button>
             <Link
               to="/events"
-              className="bg-white/10 backdrop-blur-sm border border-red-500 hover:bg-red-600 px-6 py-3 rounded-full font-bold text-lg transition"
+              className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-full font-bold text-lg transition transform hover:scale-105"
             >
               📅 View Events
+            </Link>
+            <Link
+              to="/gallery"
+              className="bg-white/10 backdrop-blur-sm border border-red-500 hover:bg-red-600 px-6 py-3 rounded-full font-bold text-lg transition"
+            >
+              📸 Explore Gallery
             </Link>
           </div>
         </div>
       </div>
 
-      {/* Location Card - Sunday Celebration at Vicpillia Hotel */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="bg-gradient-to-r from-red-950/80 to-black rounded-2xl border border-red-700 overflow-hidden shadow-xl">
-          <div className="flex flex-col md:flex-row">
-            {/* Image Section - REPLACE URL WITH YOUR HOTEL IMAGE */}
-            <div className="md:w-1/3">
-              <img
-                src="/hotel-placeholder.jpg"
-                alt="Vicpillia Hotel"
-                className="w-full h-full object-cover min-h-[200px] md:min-h-full"
-              />
-            </div>
-
-            {/* Content Section */}
-            <div className="md:w-2/3 p-6">
-              <div className="flex items-center gap-2 mb-2">
-                <i className="fas fa-map-marker-alt text-red-500 text-xl"></i>
-                <h3 className="text-2xl font-bold text-white">
-                  Vicpillia Hotel
-                </h3>
-              </div>
-
-              <div className="flex items-center gap-4 flex-wrap mb-3">
-                <span className="flex items-center gap-1 text-gray-300">
-                  <i className="fas fa-calendar-alt text-red-400"></i>
-                  Sunday, May 31st
-                </span>
-                <span className="flex items-center gap-1 text-gray-300">
-                  <i className="fas fa-clock text-red-400"></i>
-                  By 8:00 PM
-                </span>
-              </div>
-
-              <p className="text-gray-300 mb-4">
-                Join us to celebrate OGABISHOP's birthday! Come through, have
-                fun, and make memories. Everyone is welcome! 🎂🎉
-              </p>
-
-              <a
-                href="https://maps.app.goo.gl/GqUfURmuj3NRDtBc9?g_st=iwb"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-full transition duration-300 transform hover:scale-105"
-              >
-                <i className="fas fa-directions"></i>
-                Get Directions
-              </a>
-            </div>
+      {/* NEW: Three images section – you can replace these with your own images */}
+      <div className="max-w-7xl mx-auto px-4 py-16">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+          ✨ Highlights ✨
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="bg-black/40 rounded-2xl overflow-hidden border border-red-800 hover:scale-105 transition">
+            <img
+              src="/placeholder-1.jpg"
+              alt="Highlight 1"
+              className="w-full h-64 object-cover"
+            />
+          </div>
+          <div className="bg-black/40 rounded-2xl overflow-hidden border border-red-800 hover:scale-105 transition">
+            <img
+              src="/placeholder-2.jpg"
+              alt="Highlight 2"
+              className="w-full h-64 object-cover"
+            />
+          </div>
+          <div className="bg-black/40 rounded-2xl overflow-hidden border border-red-800 hover:scale-105 transition">
+            <img
+              src="/placeholder-3.jpg"
+              alt="Highlight 3"
+              className="w-full h-64 object-cover"
+            />
           </div>
         </div>
+        <p className="text-center text-gray-400 mt-4 text-sm">
+          📸 Memorable moments – more coming soon
+        </p>
       </div>
 
       {/* Latest Comedy Drops with TikTok Embeds */}
