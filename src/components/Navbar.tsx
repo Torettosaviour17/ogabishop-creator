@@ -15,7 +15,7 @@ export default function Navbar() {
   const navLinks = [
     { path: "/", label: "Home", protected: false },
     { path: "/about", label: "About", protected: false },
-    { path: "/gallery", label: "Gallery", protected: true },
+    { path: "/gallery", label: "Gallery", protected: false },
     { path: "/events", label: "Events", protected: true },
     { path: "/wishes", label: "Wishes", protected: true },
     { path: "/contact", label: "Contact", protected: false },
