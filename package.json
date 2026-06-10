@@ -22,6 +22,7 @@
     "vite": "^8.0.12"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.108.1",
     "@vitejs/plugin-react": "^6.0.2",
     "emailjs-com": "^3.2.0",
     "firebase": "^12.13.0",
