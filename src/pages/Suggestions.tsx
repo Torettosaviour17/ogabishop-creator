@@ -1,66 +1,68 @@
 import { useState, useEffect } from "react";
-import { db } from "../firebase/config";
-import {
-  collection,
-  addDoc,
-  getDocs,
-  orderBy,
-  query,
-} from "firebase/firestore";
-import type { Wish } from "../types";
+import { supabase } from "../supabase/client";
 
-export default function Wishes() {
-  const [wishes, setWishes] = useState<Wish[]>([]);
-  const [showForm, setShowForm] = useState(false);
+interface Suggestion {
+  id: number;
+  name: string;
+  message: string;
+  created_at: string;
+}
+
+export default function Suggestions() {
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
-    fetchWishes();
+    fetchSuggestions();
   }, []);
 
-  const fetchWishes = async () => {
-    const q = query(collection(db, "wishes"), orderBy("createdAt", "desc"));
-    const snapshot = await getDocs(q);
-    const items = snapshot.docs.map(
-      (doc) => ({ id: doc.id, ...doc.data() }) as Wish,
-    );
-    setWishes(items);
+  const fetchSuggestions = async () => {
+    const { data, error } = await supabase
+      .from("wishes") // Keep using the existing "wishes" table (or rename it later)
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) console.error(error);
+    else setSuggestions(data || []);
   };
 
-  const addWish = async () => {
-    if (!name || !message) return alert("Please enter your name and message");
-    await addDoc(collection(db, "wishes"), {
+  const addSuggestion = async () => {
+    if (!name || !message)
+      return alert("Please enter your name and suggestion");
+    const { error } = await supabase.from("wishes").insert({
       name,
       message,
-      createdAt: new Date(),
+      created_at: new Date(),
     });
+    if (error) {
+      console.error(error);
+      alert("Failed to submit. Please try again.");
+      return;
+    }
     setName("");
     setMessage("");
     setShowForm(false);
-    fetchWishes();
+    fetchSuggestions();
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-4 md:p-6">
-      <h1 className="text-5xl font-bold text-center mb-2">
-        💬 Birthday Wishes
-      </h1>
+    <div className="max-w-5xl mx-auto p-6">
+      <h1 className="text-5xl font-bold text-center mb-2">💡 Suggestions</h1>
       <p className="text-center text-gray-400 mb-10">
-        Leave a sweet message for OGABISHOP
+        Help OGABISHOP improve – share your ideas, feedback, or what you'd like
+        to see next.
       </p>
 
-      {/* Toggle Button */}
       <div className="flex justify-center mb-8">
         <button
           onClick={() => setShowForm(!showForm)}
           className="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-full flex items-center gap-2"
         >
-          {showForm ? "− Cancel" : "✍️ Write a Wish"}
+          {showForm ? "− Cancel" : "✍️ Share a Suggestion"}
         </button>
       </div>
 
-      {/* Wish Form (conditionally visible) */}
       {showForm && (
         <div className="bg-gradient-to-br from-red-950/50 to-black rounded-2xl p-6 mb-12 border border-red-500">
           <input
@@ -71,40 +73,39 @@ export default function Wishes() {
             onChange={(e) => setName(e.target.value)}
           />
           <textarea
-            placeholder="Your birthday wish for OGABISHOP..."
+            placeholder="Your suggestion..."
             className="w-full p-3 rounded-lg bg-black/60 border border-red-800 mb-3"
             rows={4}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           />
           <button
-            onClick={addWish}
+            onClick={addSuggestion}
             className="bg-red-700 hover:bg-red-800 px-6 py-2 rounded-full"
           >
-            Send Wish 🎂
+            Submit Suggestion
           </button>
         </div>
       )}
 
-      {/* Wishes Grid */}
       <div className="grid md:grid-cols-2 gap-6">
-        {wishes.map((wish) => (
+        {suggestions.map((sug) => (
           <div
-            key={wish.id}
+            key={sug.id}
             className="bg-black/50 backdrop-blur-sm rounded-xl p-5 border border-red-800 hover:shadow-xl transition"
           >
-            <p className="font-bold text-red-400 text-lg">{wish.name}</p>
-            <p className="mt-2 text-gray-200 italic">"{wish.message}"</p>
+            <p className="font-bold text-red-400 text-lg">{sug.name}</p>
+            <p className="mt-2 text-gray-200 italic">"{sug.message}"</p>
             <p className="text-xs text-gray-500 mt-3">
-              {new Date(wish.createdAt).toLocaleString()}
+              {new Date(sug.created_at).toLocaleString()}
             </p>
           </div>
         ))}
       </div>
 
-      {wishes.length === 0 && (
+      {suggestions.length === 0 && (
         <div className="text-center text-gray-400 py-12">
-          No wishes yet. Be the first to wish OGABISHOP!
+          No suggestions yet. Be the first to share your idea!
         </div>
       )}
     </div>

@@ -5,7 +5,7 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Events from "./pages/Events";
-import Wishes from "./pages/Wishes";
+import Suggestions from "./pages/Suggestions";
 import Friendship from "./pages/Friendship";
 import ProtectedRoute from "./components/ProtectedRoute";
 import BirthdayPopup from "./components/BirthdayPopup";
@@ -43,13 +43,14 @@ function App() {
               }
             />
             <Route
-              path="/wishes"
+              path="/suggestions"
               element={
                 <ProtectedRoute password="jesus">
-                  <Wishes />
+                  <Suggestions />
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/friendship"
               element={
