@@ -17,6 +17,8 @@ export default function Gallery() {
   const [showUploadForm, setShowUploadForm] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null); // track which three-dot menu is open
 
   useEffect(() => {
     fetchImages();
@@ -87,13 +89,13 @@ export default function Gallery() {
       alert("Uploaded!");
     } catch (err) {
       console.error(err);
-      alert("Upload failed. Check Supabase storage rules (set to public).");
+      alert("Upload failed");
     }
     setUploading(false);
   };
 
   const handleDelete = async (id: number, storagePath: string) => {
-    if (!confirm("Delete this image?")) return;
+    if (!confirm("Delete this image permanently?")) return;
     try {
       await supabase.storage.from("gallery").remove([storagePath]);
       await supabase.from("gallery").delete().eq("id", id);
@@ -104,6 +106,13 @@ export default function Gallery() {
     }
   };
 
+  // Close the three-dot menu if clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => setOpenMenuId(null);
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
+
   return (
     <div className="max-w-7xl mx-auto p-4 md:p-6">
       <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
@@ -111,7 +120,9 @@ export default function Gallery() {
           <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-red-500 to-orange-400 bg-clip-text text-transparent">
             📸 Gallery
           </h1>
-          <p className="text-gray-400 mt-1">Drag & drop any image</p>
+          <p className="text-gray-400 mt-1">
+            Click any image to view full size
+          </p>
         </div>
         <button
           onClick={() => setShowUploadForm(!showUploadForm)}
@@ -126,10 +137,10 @@ export default function Gallery() {
         </button>
       </div>
 
+      {/* Upload Form (unchanged) */}
       {showUploadForm && (
         <div className="bg-gradient-to-br from-black/60 to-red-950/20 backdrop-blur-md rounded-2xl p-6 mb-12 border border-red-700 shadow-2xl">
           <div className="grid md:grid-cols-2 gap-6">
-            {/* Drop zone */}
             <div>
               <div
                 className={`border-2 border-dashed rounded-xl p-6 text-center transition cursor-pointer ${
@@ -168,8 +179,6 @@ export default function Gallery() {
                 />
               </div>
             </div>
-
-            {/* Caption + Upload */}
             <div>
               <input
                 type="text"
@@ -207,7 +216,7 @@ export default function Gallery() {
         </div>
       )}
 
-      {/* Gallery grid */}
+      {/* Gallery Grid – updated with three‑dot menu and modal trigger */}
       {images.length === 0 ? (
         <div className="text-center text-gray-400 py-20 bg-black/30 rounded-2xl border border-dashed border-red-800">
           <i className="fas fa-camera text-6xl mb-4 opacity-50"></i>
@@ -221,31 +230,87 @@ export default function Gallery() {
           {images.map((img) => (
             <div
               key={img.id}
-              className="bg-black/50 rounded-xl overflow-hidden border border-red-800 hover:scale-[1.02] transition group shadow-lg"
+              className="bg-black/50 rounded-xl overflow-hidden border border-red-800 hover:scale-[1.02] transition group shadow-lg relative"
             >
-              <div className="relative">
+              {/* Image – click to open modal */}
+              <div
+                className="relative cursor-pointer"
+                onClick={() => setSelectedImage(img)}
+              >
                 <img
                   src={img.image_url}
                   alt={img.caption || "Gallery"}
                   className="w-full h-56 object-cover"
                 />
-                <button
-                  onClick={() => handleDelete(img.id, img.storage_path)}
-                  className="absolute top-2 right-2 bg-black/70 hover:bg-red-700 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition"
-                >
-                  <i className="fas fa-trash-alt text-sm"></i>
-                </button>
-              </div>
-              {img.caption && (
-                <div className="p-3">
-                  <p className="text-sm text-gray-200">{img.caption}</p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {new Date(img.uploaded_at).toLocaleDateString()}
-                  </p>
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition flex items-center justify-center opacity-0 group-hover:opacity-100">
+                  <i className="fas fa-expand text-white text-2xl"></i>
                 </div>
-              )}
+              </div>
+
+              {/* Caption and three‑dot menu */}
+              <div className="p-3 flex justify-between items-center">
+                {img.caption ? (
+                  <p className="text-sm text-gray-200 truncate flex-1 mr-2">
+                    {img.caption}
+                  </p>
+                ) : (
+                  <span className="flex-1"></span>
+                )}
+                <div className="relative">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpenMenuId(openMenuId === img.id ? null : img.id);
+                    }}
+                    className="text-gray-400 hover:text-red-400 transition px-2"
+                  >
+                    <i className="fas fa-ellipsis-v"></i>
+                  </button>
+                  {openMenuId === img.id && (
+                    <div className="absolute right-0 mt-2 w-32 bg-black/90 backdrop-blur-sm rounded-lg shadow-lg border border-red-800 z-10">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(img.id, img.storage_path);
+                          setOpenMenuId(null);
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-950 rounded-lg"
+                      >
+                        <i className="fas fa-trash-alt mr-2"></i> Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Full-screen Image Modal */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 transition-all"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div className="relative max-w-7xl max-h-[90vh] w-auto h-auto">
+            <img
+              src={selectedImage.image_url}
+              alt={selectedImage.caption || "Full size"}
+              className="w-full h-full object-contain rounded-lg shadow-2xl"
+            />
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute top-2 right-2 bg-black/60 hover:bg-red-700 text-white rounded-full w-8 h-8 flex items-center justify-center text-xl transition"
+            >
+              ✕
+            </button>
+            {selectedImage.caption && (
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center text-white bg-black/70 py-2 px-5 rounded-full backdrop-blur-sm text-sm">
+                {selectedImage.caption}
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
