@@ -17,7 +17,7 @@ export default function Friendship() {
             🎂 Your 25th birthday surprise
           </div>
           <div className="bg-black/50 p-4 rounded-xl">
-            🚀 Hitting 10k followers together
+            🚀 Hitting 100k followers together
           </div>
         </div>
         <p className="mt-8 italic">
