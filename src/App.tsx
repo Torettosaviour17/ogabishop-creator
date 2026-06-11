@@ -20,19 +20,18 @@ function App() {
         <Navbar />
         <main className="grow">
           <Routes>
-            {/* Home is public */}
+            
             <Route path="/" element={<Home />} />
 
-            {/* All other routes require password "jesus" */}
+            
             <Route path="/about" element={<About />} />
             <Route
               path="/gallery"
               element={
-                <ProtectedRoute password="jesus">
                   <Gallery />
-                </ProtectedRoute>
               }
             />
+
             <Route path="/contact" element={<Contact />} />
             <Route
               path="/events"
