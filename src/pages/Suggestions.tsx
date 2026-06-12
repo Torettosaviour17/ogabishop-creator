@@ -20,7 +20,7 @@ export default function Suggestions() {
 
   const fetchSuggestions = async () => {
     const { data, error } = await supabase
-      .from("wishes") // Keep using the existing "wishes" table (or rename it later)
+      .from("suggestions") // 👈 now using the renamed table
       .select("*")
       .order("created_at", { ascending: false });
     if (error) console.error(error);
@@ -30,7 +30,7 @@ export default function Suggestions() {
   const addSuggestion = async () => {
     if (!name || !message)
       return alert("Please enter your name and suggestion");
-    const { error } = await supabase.from("wishes").insert({
+    const { error } = await supabase.from("suggestions").insert({
       name,
       message,
       created_at: new Date(),
