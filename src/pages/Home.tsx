@@ -84,7 +84,7 @@ export default function Home() {
       </div>
 
       {/* NEW: Three images section – you can replace these with your own images */}
-      <div className="max-w-7xl mx-auto px-4 py-16">
+      {/* <div className="max-w-7xl mx-auto px-4 py-16">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
           ✨ Highlights ✨
         </h2>
@@ -114,7 +114,7 @@ export default function Home() {
         <p className="text-center text-gray-400 mt-4 text-sm">
           📸 Memorable moments – more coming soon
         </p>
-      </div>
+      </div> */}
 
       {/* Latest Comedy Drops with TikTok Embeds */}
       <div className="max-w-7xl mx-auto px-4 py-16">
