@@ -1,5 +1,6 @@
 import { useState, useEffect, type ChangeEvent, type DragEvent } from "react";
 import { supabase } from "../supabase/client";
+import Dialog from "../components/Dialog";
 
 interface GalleryImage {
   id: number;
@@ -19,6 +20,26 @@ export default function Gallery() {
   const [isDragOver, setIsDragOver] = useState(false);
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+
+  // Dialog state
+  const [dialog, setDialog] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+    onCancel?: () => void;
+    confirmText?: string;
+    cancelText?: string;
+    type?: "info" | "warning" | "error" | "success";
+  }>({
+    isOpen: false,
+    title: "",
+    message: "",
+    onConfirm: () => {},
+    type: "info",
+  });
+
+  const closeDialog = () => setDialog({ ...dialog, isOpen: false });
 
   useEffect(() => {
     fetchImages();
@@ -52,12 +73,29 @@ export default function Gallery() {
       setFile(f);
       setPreviewUrl(URL.createObjectURL(f));
     } else {
-      alert("Drop an image file");
+      setDialog({
+        isOpen: true,
+        title: "Invalid File",
+        message: "Please drop an image file (JPEG, PNG, GIF, etc.)",
+        onConfirm: closeDialog,
+        confirmText: "Got it",
+        type: "error",
+      });
     }
   };
 
   const handleUpload = async () => {
-    if (!file) return alert("Select an image");
+    if (!file) {
+      setDialog({
+        isOpen: true,
+        title: "No Image Selected",
+        message: "Please select or drop an image first.",
+        onConfirm: closeDialog,
+        confirmText: "OK",
+        type: "warning",
+      });
+      return;
+    }
     setUploading(true);
     try {
       const fileExt = file.name.split(".").pop();
@@ -86,24 +124,64 @@ export default function Gallery() {
       setPreviewUrl(null);
       setShowUploadForm(false);
       await fetchImages();
-      alert("Uploaded!");
+      setDialog({
+        isOpen: true,
+        title: "Success!",
+        message: "Image uploaded successfully.",
+        onConfirm: closeDialog,
+        confirmText: "Great",
+        type: "success",
+      });
     } catch (err) {
       console.error(err);
-      alert("Upload failed");
+      setDialog({
+        isOpen: true,
+        title: "Upload Failed",
+        message: "Could not upload image. Check your connection or try again.",
+        onConfirm: closeDialog,
+        confirmText: "OK",
+        type: "error",
+      });
     }
     setUploading(false);
   };
 
   const handleDelete = async (id: number, storagePath: string) => {
-    if (!confirm("Delete this image permanently?")) return;
-    try {
-      await supabase.storage.from("gallery").remove([storagePath]);
-      await supabase.from("gallery").delete().eq("id", id);
-      await fetchImages();
-    } catch (err) {
-      console.error(err);
-      alert("Delete failed");
-    }
+    setDialog({
+      isOpen: true,
+      title: "Delete Image?",
+      message: "This action cannot be undone. Are you sure?",
+      onConfirm: async () => {
+        closeDialog();
+        try {
+          await supabase.storage.from("gallery").remove([storagePath]);
+          await supabase.from("gallery").delete().eq("id", id);
+          await fetchImages();
+          setDialog({
+            isOpen: true,
+            title: "Deleted",
+            message: "Image removed from gallery.",
+            onConfirm: closeDialog,
+            confirmText: "OK",
+            type: "success",
+          });
+        } catch (err) {
+          console.error(err);
+          setDialog({
+            isOpen: true,
+            title: "Delete Failed",
+            message: "Could not delete image. Try again later.",
+            onConfirm: closeDialog,
+            confirmText: "OK",
+            type: "error",
+          });
+        }
+      },
+      onCancel: closeDialog,
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      type: "warning",
+    });
   };
 
   const handleDownload = async (imageUrl: string, caption: string) => {
@@ -120,7 +198,14 @@ export default function Gallery() {
       window.URL.revokeObjectURL(blobUrl);
     } catch (err) {
       console.error(err);
-      alert("Download failed");
+      setDialog({
+        isOpen: true,
+        title: "Download Failed",
+        message: "Could not download image. Please try again.",
+        onConfirm: closeDialog,
+        confirmText: "OK",
+        type: "error",
+      });
     }
   };
 
@@ -155,7 +240,6 @@ export default function Gallery() {
         </button>
       </div>
 
-      {/* Upload Form (unchanged) */}
       {showUploadForm && (
         <div className="bg-gradient-to-br from-black/60 to-red-950/20 backdrop-blur-md rounded-2xl p-6 mb-12 border border-red-700 shadow-2xl">
           <div className="grid md:grid-cols-2 gap-6">
@@ -234,7 +318,6 @@ export default function Gallery() {
         </div>
       )}
 
-      {/* Gallery Grid – card now uses overflow-visible to show dropdown */}
       {images.length === 0 ? (
         <div className="text-center text-gray-400 py-20 bg-black/30 rounded-2xl border border-dashed border-red-800">
           <i className="fas fa-camera text-6xl mb-4 opacity-50"></i>
@@ -250,7 +333,6 @@ export default function Gallery() {
               key={img.id}
               className="bg-black/50 rounded-xl border border-red-800 hover:scale-[1.02] transition group shadow-lg relative overflow-visible"
             >
-              {/* Image – click to open modal */}
               <div
                 className="relative cursor-pointer rounded-t-xl overflow-hidden"
                 onClick={() => setSelectedImage(img)}
@@ -264,8 +346,6 @@ export default function Gallery() {
                   <i className="fas fa-expand text-white text-2xl"></i>
                 </div>
               </div>
-
-              {/* Caption and three‑dot menu */}
               <div className="p-3 flex justify-between items-center">
                 {img.caption ? (
                   <p className="text-sm text-gray-200 truncate flex-1 mr-2">
@@ -315,7 +395,6 @@ export default function Gallery() {
         </div>
       )}
 
-      {/* Full-screen Image Modal (unchanged) */}
       {selectedImage && (
         <div
           className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 transition-all"
@@ -341,6 +420,17 @@ export default function Gallery() {
           </div>
         </div>
       )}
+
+      <Dialog
+        isOpen={dialog.isOpen}
+        title={dialog.title}
+        message={dialog.message}
+        onConfirm={dialog.onConfirm}
+        onCancel={dialog.onCancel}
+        confirmText={dialog.confirmText}
+        cancelText={dialog.cancelText}
+        type={dialog.type}
+      />
     </div>
   );
 }
